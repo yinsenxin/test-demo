@@ -2,6 +2,7 @@ package com.mybatis.demo.java8.stream;
 
 import com.mybatis.demo.entity.Dish;
 import java.util.*;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -83,7 +84,8 @@ public class test1 {
                         Optional::get
                 )));
 
-
+        Map<Dish.Type, Dish> collect5 = list.stream().filter(item -> item.getType() != null && item.getCalories() != null)
+                .collect(Collectors.toMap(Dish::getType, Function.identity(), BinaryOperator.maxBy(Comparator.comparingInt(Dish::getCalories))));
 
 
     }

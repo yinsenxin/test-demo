@@ -36,6 +36,7 @@ public class testtt {
 //            }
 //
         User user = new User();
+
         user.setName("张三");
         user.setDesc("123");
         String string = JSON.toJSONString(user);
@@ -44,10 +45,10 @@ public class testtt {
         String name = jsonObject.getString("name2");
         System.out.println(name);
 
-        JSONObject json = new JSONObject();
-        json.put("123","ssss");
+        String s = "";
+        System.out.println(EncryptUtil.decryptBase64(s, "K0d3ry7f!ZW9qA4f"));
 
-        System.out.println(json);
+//        System.out.println(json);
 
     }
 
