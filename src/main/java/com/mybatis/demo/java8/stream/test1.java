@@ -11,12 +11,12 @@ public class test1 {
     public static void main(String[] args) {
 
         List<Dish> list = Stream.of(
-                new Dish("pork", false, -800, Dish.Type.MEAT),
+                new Dish("pork", false, 800, Dish.Type.MEAT),
                 new Dish("beef", false, -700, Dish.Type.MEAT),
                 new Dish("chicken", false, -400, Dish.Type.MEAT),
-                new Dish("french fries", true, -530, Dish.Type.OTHER),
-                new Dish("rice", true, -3501, Dish.Type.OTHER),
-                new Dish("season fruit", true, 120, Dish.Type.OTHER),
+                new Dish("french fries", true, 530, Dish.Type.OTHER),
+                new Dish("rice", true, 3501, Dish.Type.OTHER),
+                new Dish("season fruit", true, -120, Dish.Type.OTHER),
                 new Dish("pizza", true, -550, Dish.Type.OTHER),
                 new Dish("prawns", false, -300, Dish.Type.FISH),
                 new Dish("test", false, -450, Dish.Type.FISH),
@@ -33,16 +33,14 @@ public class test1 {
         OptionalInt max = list.stream().filter(item -> item.getCalories() != null).mapToInt(Dish::getCalories).max();
         Optional<Integer> max1 = list.stream().filter(item -> item.getCalories() != null).map(Dish::getCalories).reduce(Integer::max);
         Optional<Dish> max2 = list.stream().filter(item -> item.getCalories() != null).collect(Collectors.maxBy(Comparator.comparing(Dish::getCalories)));
-        Optional<Dish> max3 = list.stream().filter(item -> item.getCalories() != null).max(Comparator.comparing(Dish::getCalories));
-        Optional<Dish> max4 = list.stream().filter(item -> item.getCalories() != null).collect(Collectors.reducing(((d1, d2) -> d1.getCalories() > d2.getCalories() ? d1 : d2)));
-        Integer max5 = list.stream().filter(item -> item.getCalories() != null).map(Dish::getCalories).reduce(0, Integer::max);
-        Integer max6 = list.stream().filter(item -> item.getCalories() != null).collect(Collectors.reducing(0, Dish::getCalories, Integer::max));
+        Optional<Dish> max3 = list.stream().filter(item -> item.getCalories() != null).collect(Collectors.reducing(((d1, d2) -> d1.getCalories() > d2.getCalories() ? d1 : d2)));
+        Optional<Dish> max4 = list.stream().filter(item -> item.getCalories() != null).max(Comparator.comparing(Dish::getCalories));
 
         // 求list元素中热量的总和
-        Integer sum1 = list.stream().filter(item -> item.getCalories() != null).mapToInt(Dish::getCalories).sum();
-        Optional<Integer> sum2 = list.stream().filter(item -> item.getCalories() != null).map(Dish::getCalories).reduce(Integer::sum);
-        Integer sum3 = list.stream().filter(item -> item.getCalories() != null).collect(Collectors.summingInt(Dish::getCalories));
-        Integer sum4 = list.stream().filter(item -> item.getCalories() != null).collect(Collectors.reducing(0, Dish::getCalories, Integer::sum));
+        Integer sum = list.stream().filter(item -> item.getCalories() != null).mapToInt(Dish::getCalories).sum();
+        Optional<Integer> sum1 = list.stream().filter(item -> item.getCalories() != null).map(Dish::getCalories).reduce(Integer::sum);
+        Integer sum2 = list.stream().filter(item -> item.getCalories() != null).collect(Collectors.summingInt(Dish::getCalories));
+        Integer sum3 = list.stream().filter(item -> item.getCalories() != null).collect(Collectors.reducing(0, Dish::getCalories, Integer::sum));
 
         // 求list元素中热量的平均值
         OptionalDouble average = list.stream().filter(item -> item.getCalories() != null).mapToInt(Dish::getCalories).average();
@@ -74,6 +72,20 @@ public class test1 {
                             else return "fat";
                         }
                 )));
+
+        collect1.forEach((key,value) ->{
+            System.out.println(key);
+            value.forEach(System.out::println);
+        });
+        System.out.println("------------------------------------------");
+        Map<String, List<Dish>> collect7 = list.stream().filter(item -> item.getType() != null && item.getCalories() != null)
+                .collect(Collectors.groupingBy(Dish::getGroupCalories));
+        collect7.forEach((key,value) ->{
+            System.out.println(key);
+            value.forEach(System.out::println);
+        });
+
+
         // 按子组收集数据
         Map<Dish.Type, Long> collect3 = list.stream().filter(item -> item.getType() != null)
                 .collect(Collectors.groupingBy(Dish::getType, Collectors.counting()));
@@ -87,6 +99,8 @@ public class test1 {
         Map<Dish.Type, Dish> collect5 = list.stream().filter(item -> item.getType() != null && item.getCalories() != null)
                 .collect(Collectors.toMap(Dish::getType, Function.identity(), BinaryOperator.maxBy(Comparator.comparingInt(Dish::getCalories))));
 
+//        Map<Dish.Type, Dish> collect6 = list.stream().filter(item -> item.getType() != null && item.getCalories() != null && item.getName() != null)
+//                .collect(Collectors.toMap(Dish::getType, Function.identity()));
 
     }
 

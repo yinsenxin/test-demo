@@ -26,6 +26,15 @@ public class Dish {
      */
     private  Dish.Type type;
 
+
+    public String getGroupCalories(){
+        if (this.calories <= 400){
+            return "低热量";
+        } else if (this.calories <= 700){
+            return "中热量";
+        } else return "高热量";
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
