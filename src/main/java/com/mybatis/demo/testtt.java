@@ -35,18 +35,28 @@ public class testtt {
 //                System.out.print(i + "    ");
 //            }
 //
-        User user = new User();
+//        User user = new User();
+//
+//        user.setName("张三");
+//        user.setDesc("123");
+//        String string = JSON.toJSONString(user);
+//
+//        JSONObject jsonObject = JSON.parseObject(string);
+//        String name = jsonObject.getString("name2");
+//        System.out.println(name);
+//
+//        String s = "";
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("pageSize", 10);
+        jsonObject.put("pageNum", 1);
+        String s = jsonObject.toJSONString();
+        System.out.println(EncryptUtil.encryptBase64(s, "K0d3ry7f!ZW9qA4f"));
 
-        user.setName("张三");
-        user.setDesc("123");
-        String string = JSON.toJSONString(user);
 
-        JSONObject jsonObject = JSON.parseObject(string);
-        String name = jsonObject.getString("name2");
-        System.out.println(name);
 
-        String s = "";
-        System.out.println(EncryptUtil.decryptBase64(s, "K0d3ry7f!ZW9qA4f"));
+        String string = "leaveMala";
+
+        System.out.println(string.substring(5));
 
 //        System.out.println(json);
 

@@ -62,6 +62,11 @@ public class test1 {
                             else return "fat";
                         }
                 ));
+
+        // 分组 查询出菜单类型的总热量
+        Map<Dish.Type, Integer> collect6 = list.stream().filter(item -> item != null && item.getCalories() != null && item.getType() != null)
+                .collect(Collectors.groupingBy(Dish::getType, Collectors.summingInt(Dish::getCalories)));
+
         // 多级分组
         Map<Dish.Type, Map<String, List<Dish>>> collect2 = list.stream().filter(item -> item.getType() != null && item.getCalories() != null)
                 .collect(Collectors.groupingBy(Dish::getType, Collectors.groupingBy(
