@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class test1 {
@@ -82,7 +83,7 @@ public class test1 {
             System.out.println(key);
             value.forEach(System.out::println);
         });
-        System.out.println("------------------------------------------");
+
         Map<String, List<Dish>> collect7 = list.stream().filter(item -> item.getType() != null && item.getCalories() != null)
                 .collect(Collectors.groupingBy(Dish::getGroupCalories));
         collect7.forEach((key,value) ->{
@@ -107,8 +108,19 @@ public class test1 {
 //        Map<Dish.Type, Dish> collect6 = list.stream().filter(item -> item.getType() != null && item.getCalories() != null && item.getName() != null)
 //                .collect(Collectors.toMap(Dish::getType, Function.identity()));
 
+        System.out.println("质数");
+        Map<Boolean, List<Integer>> booleanListMap = partitionPrimes(100);
+        List<Integer> integers = booleanListMap.get(true);
+        integers.forEach(System.out::println);
     }
 
+
+    // 质数与非质数
+    public static Map<Boolean, List<Integer>> partitionPrimes(int n) {
+        return IntStream.rangeClosed(2, n).boxed()
+                .collect(
+                        Collectors.partitioningBy(Dish::isPrime));
+    }
 
 }
 

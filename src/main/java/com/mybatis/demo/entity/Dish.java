@@ -3,12 +3,13 @@ package com.mybatis.demo.entity;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+import java.util.stream.IntStream;
+
 /**
  * @author 尹森鑫
  */
 
 public class Dish {
-
     /**
      * 名称
      */
@@ -26,13 +27,20 @@ public class Dish {
      */
     private  Dish.Type type;
 
-
+    // 测试方法引用
     public String getGroupCalories(){
         if (this.calories <= 400){
             return "低热量";
         } else if (this.calories <= 700){
             return "中热量";
         } else return "高热量";
+    }
+
+    // 测试方法引用 (质数与非质数)
+    public static boolean isPrime (int candidate){
+        int candidateRoot = (int) Math.sqrt((double) candidate);
+        return IntStream.rangeClosed(2, candidateRoot)
+                .noneMatch(i -> candidate % i == 0);
     }
 
     @Override
