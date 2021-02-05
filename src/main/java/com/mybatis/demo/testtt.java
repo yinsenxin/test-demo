@@ -6,6 +6,7 @@ import com.mybatis.demo.entity.Dish;
 import com.mybatis.demo.util.EncryptUtil;
 import com.ygjt.cargo.common.utils.excel.Excel;
 import com.ygjt.cargo.dao.SystemDictionaryDao;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.val;
 import org.apache.commons.lang.StringUtils;
@@ -46,19 +47,8 @@ public class testtt {
 //        System.out.println(name);
 //
 //        String s = "";
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("pageSize", 10);
-        jsonObject.put("pageNum", 1);
-        String s = jsonObject.toJSONString();
-        System.out.println(EncryptUtil.encryptBase64(s, "K0d3ry7f!ZW9qA4f"));
-
-
-
-        String string = "leaveMala";
-
-        System.out.println(string.substring(5));
-
-//        System.out.println(json);
+      String str = "40HQ";
+        System.out.println(str.substring(0,2));
 
     }
 
