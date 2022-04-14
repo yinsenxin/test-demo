@@ -105,8 +105,12 @@ public class test1 {
         Map<Dish.Type, Dish> collect5 = list.stream().filter(item -> item.getType() != null && item.getCalories() != null)
                 .collect(Collectors.toMap(Dish::getType, Function.identity(), BinaryOperator.maxBy(Comparator.comparingInt(Dish::getCalories))));
 
-//        Map<Dish.Type, Dish> collect6 = list.stream().filter(item -> item.getType() != null && item.getCalories() != null && item.getName() != null)
-//                .collect(Collectors.toMap(Dish::getType, Function.identity()));
+
+                Map<Dish.Type, Dish> collect61 = list.stream().filter(item -> item.getType() != null && item.getCalories() != null && item.getName() != null)
+                .collect(Collectors.toMap(Dish::getType, Function.identity()));
+
+        Map<Dish.Type, Dish> collect8 = list.stream().filter(item -> item.getType() != null && item.getCalories() != null && item.getName() != null)
+                .collect(Collectors.toMap(Dish::getType, Function.identity(), BinaryOperator.minBy(Comparator.comparingInt(Dish::getCalories))));
 
         System.out.println("质数");
         Map<Boolean, List<Integer>> booleanListMap = partitionPrimes(100);

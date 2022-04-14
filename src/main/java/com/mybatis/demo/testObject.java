@@ -1,6 +1,5 @@
 package com.mybatis.demo;
 
-import com.ygjt.cargo.common.exception.ServiceException;
 import org.apache.commons.lang.StringUtils;
 
 import javax.validation.constraints.NotEmpty;
@@ -55,7 +54,7 @@ public class testObject {
                         // 获取 NotNull
                         Map map = (Map) fieldName.get(h);
                         String message = (String) map.get("message");
-                        throw new ServiceException("发送到港区联动 " + message);
+                        throw new IllegalArgumentException("发送到港区联动 " + message);
                     }
                 }
             } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException e) {
