@@ -1,9 +1,12 @@
 package com.mybatis.demo;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class t1 {
@@ -14,13 +17,23 @@ public class t1 {
 //
 //        list.sort(comparator.reversed());
 //        Collections.sort(list);
-        A a = new A("1", "2");
-        A b = new A("1", "2");
-        Set<A> set = new HashSet<>();
-        set.add(a);
-        set.add(b);
+//        A a = new A("1", "2");
+//        A b = new A("1", "2");
+//        Set<A> set = new HashSet<>();
+//        set.add(a);
+//        set.add(b);
+//
+//        System.out.println(set.size());
 
-        System.out.println(set.size());
+
+        List<String> list = new ArrayList<String>(){{
+            add("noOut");
+            add("transport");
+            add("signFor");
+        }};
+        boolean a = list.stream().noneMatch(item -> StringUtils.equals(item, "arrive"));
+        System.out.println(a);
+
 
     }
 

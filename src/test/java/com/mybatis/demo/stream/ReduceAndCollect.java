@@ -103,7 +103,7 @@ public class ReduceAndCollect {
         /**
          * 方法一: 一次性 求出 Map<用户账号, 订单(数量, 总金额)>
          */
-        HashMap<String, Order> maps = list.stream().collect(() -> new HashMap<String, Order>(),
+        HashMap<String, Order> maps = list.stream().collect(HashMap::new,
 
                 (HashMap<String, Order> map, Order newOrder) -> {
                     String account = newOrder.getAccount();

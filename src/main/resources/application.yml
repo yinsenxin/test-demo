@@ -1,5 +1,5 @@
 server:
-  port: 8888
+  port: 8080
 
 
 
@@ -10,7 +10,7 @@ spring:
     #druid
     druid:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/mytest?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&serverTimezone=UTC
+      url: jdbc:mysql://127.0.0.1:3306/mytest?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&serverTimezone=UTC
       username: root
       password: 123456
 
@@ -32,3 +32,14 @@ pagehelper:
   reasonable: true
   supportMethodsArguments: true
   params: count=countSq
+
+
+token: d0f4eaa10e1e4cbcaa907d62ecd512f1
+appId: wxe8efa57e42e9b249
+appSecret: 753feef9bd036cc52f96f0fdfa730416
+
+wx:
+  appId: wxe8efa57e42e9b249
+  secret: 753feef9bd036cc52f96f0fdfa730416
+  token: d0f4eaa10e1e4cbcaa907d62ecd512f1
+  aesKey: KtOjqYWssGHc3A9GrkCD397b8gGk3Vrw8FcCqiSjfqa

@@ -5,7 +5,6 @@ import com.mybatis.demo.entity.Dish;
 import com.mybatis.demo.service.impl.DishServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.platform.commons.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,7 +39,7 @@ public class StreamCollector {
     @Test
     public void toGroup(){
         Map<Integer, List<Dish>> collect = list.stream()
-                .collect(Collectors.groupingBy(dish -> dish.getCalories()));
+                .collect(Collectors.groupingBy(Dish::getCalories));
 
         System.out.println(JSON.toJSONString(collect, true));
     }
@@ -63,7 +62,7 @@ public class StreamCollector {
         list.add(2);
         list.add(3);
 
-        double sum = list.stream().mapToDouble(Integer::doubleValue).sum();
+        int sum = list.stream().mapToInt(Integer::intValue).sum();
         long count = list.stream().mapToDouble(Integer::doubleValue).count();
 
         System.out.println(sum + "  " + count);
