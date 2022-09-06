@@ -4,6 +4,10 @@ package com.mybatis.demo.test;
 
 import com.mybatis.demo.entity.OrderBoxVo;
 import com.mybatis.demo.util.FreeMarkUtils;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import sun.misc.BASE64Encoder;
 
 import java.io.*;
 import java.util.*;
@@ -15,15 +19,49 @@ public class FreemarkerTest {
     // https://my.oschina.net/u/3737136/blog/2958421?tdsourcetag=s_pcqq_aiomsg
     private static String document="document.xml";
     private static String documentXmlRels="document.xml.rels";
+    private static String xmlContentTypes = "[Content_Types].xml";
+
     //outputStream 输出流可以自己定义 浏览器或者文件输出流
     public static void createDocx(Map dataMap, OutputStream outputStream) {
         ZipOutputStream zipout = null;
+        InputStream in=null;
         try {
             //图片配置文件模板
-            ByteArrayInputStream documentXmlRelsInput = FreeMarkUtils.getFreemarkerContentInputStream(dataMap, documentXmlRels);
+            String xmlDocumentXmlRelsComment = FreeMarkUtils.getFreemarkerContent(dataMap, documentXmlRels);
+            ByteArrayInputStream documentXmlRelsInput =
+                    new ByteArrayInputStream(xmlDocumentXmlRelsComment.getBytes());
 
             //内容模板
             ByteArrayInputStream documentInput = FreeMarkUtils.getFreemarkerContentInputStream(dataMap, document);
+
+            ByteArrayInputStream contentTypesInput = FreeMarkUtils.getFreemarkerContentInputStream(dataMap, xmlContentTypes);
+
+
+            //读取 document.xml.rels  文件 并获取rId 与 图片的关系 (如果没有图片 此文件不用编辑直接读取就行了)
+            Document document = DocumentHelper.parseText(xmlDocumentXmlRelsComment);
+            // 获取根节点
+            Element rootElt = document.getRootElement();
+            // 获取根节点下的子节点head
+            Iterator iter = rootElt.elementIterator();
+            List<Map<String, String>> picList = (List<Map<String, String>>) dataMap.get("modelList");
+            // 遍历Relationships节点
+            while (iter.hasNext()) {
+                Element recordEle = (Element) iter.next();
+                String id = recordEle.attribute("Id").getData().toString();
+                String target = recordEle.attribute("Target").getData().toString();
+                if (target.indexOf("media") == 0) {
+                    for (Map<String, String> picMap : picList) {
+                        if (target.endsWith(picMap.get("name"))) {
+                            picMap.put("rId", id);
+                        }
+                    }
+                }
+            }
+            //覆盖原来的picList;
+            dataMap.put("modelList", picList);
+
+            ByteArrayInputStream documentInput2 = FreeMarkUtils.getFreemarkerContentInputStream(dataMap, "document.xml");
+
             //最初设计的模板
             //File docxFile = new File(WordUtils.class.getClassLoader().getResource(template).getPath());
             File docxFile = new File("D:\\tmp\\test.zip");//换成自己的zip路径
@@ -41,15 +79,22 @@ public class FreemarkerTest {
                 InputStream is = zipFile.getInputStream(next);
                 if (!next.toString().contains("media")) {
                     zipout.putNextEntry(new ZipEntry(next.getName()));
-                    if (next.getName().indexOf("document.xml.rels") > 0) { //如果是document.xml.rels由我们输入
+                    if (next.getName().equals("[Content_Types].xml")) {
+                        if (contentTypesInput != null) {
+                            while ((len = contentTypesInput.read(buffer)) != -1) {
+                                zipout.write(buffer, 0, len);
+                            }
+                            contentTypesInput.close();
+                        }
+
+                    } else if (next.getName().indexOf("document.xml.rels") > 0) { //如果是document.xml.rels由我们输入
                         if (documentXmlRelsInput != null) {
                             while ((len = documentXmlRelsInput.read(buffer)) != -1) {
                                 zipout.write(buffer, 0, len);
                             }
                             documentXmlRelsInput.close();
                         }
-                    } else
-                     if ("word/document.xml".equals(next.getName())) {//如果是word/document.xml由我们输入
+                    } else if ("word/document.xml".equals(next.getName())) {//如果是word/document.xml由我们输入
                         if (documentInput != null) {
                             while ((len = documentInput.read(buffer)) != -1) {
                                 zipout.write(buffer, 0, len);
@@ -64,18 +109,18 @@ public class FreemarkerTest {
                     }
                 }
             }
-
-
             //写入图片
-            List<Map<String, Object>> picList = (List<Map<String, Object>>) dataMap.get("picList");
-            for (Map<String, Object> pic : picList) {
-                ZipEntry next = new ZipEntry("word" + File.separator + "media" + File.separator + pic.get("name"));
-                zipout.putNextEntry(new ZipEntry(next.toString()));
-                InputStream in = (ByteArrayInputStream)pic.get("code");
-                while ((len = in.read(buffer)) != -1) {
-                    zipout.write(buffer, 0, len);
+            len = -1;
+            if (picList != null && !picList.isEmpty()) {
+                for (Map<String, String> pic : picList) {
+                    ZipEntry next = new ZipEntry("word" + File.separator + "media" + File.separator + pic.get("name"));
+                    zipout.putNextEntry(new ZipEntry(next.toString()));
+                    in = new FileInputStream(pic.get("path"));
+                    while ((len = in.read(buffer)) != -1) {
+                        zipout.write(buffer, 0, len);
+                    }
+                    in.close();
                 }
-                in.close();
             }
 
         } catch (Exception e) {
@@ -99,7 +144,7 @@ public class FreemarkerTest {
             }
         }
     }
-    public static void main(String arg[]){
+    public static void main(String arg[]) throws FileNotFoundException {
         Map dataMap = new HashMap();
         OrderBoxVo orderBoxVo = new OrderBoxVo();
         orderBoxVo.setSeq(1);
@@ -118,30 +163,6 @@ public class FreemarkerTest {
         ArrayList orderBoxVoList = new ArrayList();
         orderBoxVoList.add(orderBoxVo);
         orderBoxVoList.add(orderBoxVo2);
-
-//        ArrayList minuteList=new ArrayList();
-//        MinuteTest minuteTest1=new MinuteTest();
-//        minuteTest1.setMeeting_decision_content("决策1");
-//        minuteTest1.setMeeting_decision_executor("执行者1");
-//        minuteTest1.setMeeting_decision_deadline("截至日期1");
-//        minuteList.add(minuteTest1);
-//
-//        MinuteTest minuteTest2=new MinuteTest();
-//        minuteTest2.setMeeting_decision_content("决策2");
-//        minuteTest2.setMeeting_decision_executor("执行者2");
-//        minuteTest2.setMeeting_decision_deadline("截至日期2");
-//        minuteList.add(minuteTest2);
-
-//        dataMap.put("meeting_name", "如何使象牙山发展得更加美好");
-//        dataMap.put("time", "2019-09-15 15:30");
-//        dataMap.put("site", "会议室212");
-//        dataMap.put("organizer", "张三");
-//        dataMap.put("department", "策划部");
-//        dataMap.put("attendee", "谢大脚、谢广坤、刘能");
-//        dataMap.put("meeting_content", "关于象牙山发展中的每个人的义务");
-//        dataMap.put("recorder", "王五");
-//        dataMap.put("checker", "大老板");
-//        dataMap.put("minuteList",minuteList);
           dataMap.put("entName", "菜鸟");
           dataMap.put("orderNo", "YGJT20220905111222");
           dataMap.put("productName", "铁路-德国产品");
@@ -152,13 +173,67 @@ public class FreemarkerTest {
           dataMap.put("boxNum", "500");
           dataMap.put("orderBoxVoList", orderBoxVoList);
 
+        List<Map<String, Object>> picList = new ArrayList<>();
+
+        Map<String, Object> picMap = new HashMap<>();
+        // 要按顺序
+        picMap.put("path", "D:\\tmp\\222.jpeg");
+        picMap.put("name", "222.jpeg");
+        picMap.put("rId", "rId17");
+
+        Map<String, Object> picMap2 = new HashMap<>();
+        // 要按顺序
+        picMap2.put("path", "D:\\tmp\\t11.png");
+        picMap2.put("name", "t11.png");
+        picMap2.put("rId", "rId18");
+        picList.add(picMap);
+        picList.add(picMap2);
+        dataMap.put("modelList", picList);
+
+        //      图片类型
+        List<String> picTypes = new ArrayList<>();
+        picTypes.add("jpg");
+        picTypes.add("png");
+        picTypes.add("jpeg");
+        dataMap.put("mdlTypes", picTypes);
+
 
         //指定输出docx路径
-        File outFile = new File("D:\\tmp\\new.docx") ;
+        File outFile = new File("D:\\tmp\\"+ System.currentTimeMillis() +".docx") ;
         try {
             createDocx(dataMap,new FileOutputStream(outFile));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
+
+    public static String getImgFileToBase64(String imgFile) {
+        //将图片文件转化为字节数组字符串，并对其进行Base64编码处理
+        InputStream inputStream = null;
+        byte[] buffer = null;
+        //读取图片字节数组
+        try {
+            inputStream = new FileInputStream(imgFile);
+            int count = 0;
+            while (count == 0) {
+                count = inputStream.available();
+            }
+            buffer = new byte[count];
+            inputStream.read(buffer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (inputStream != null) {
+                try {
+                    // 关闭inputStream流
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        // 对字节数组Base64编码
+        return new BASE64Encoder().encode(buffer);
+    }
+
 }

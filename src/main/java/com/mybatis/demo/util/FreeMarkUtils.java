@@ -48,4 +48,20 @@ public class FreeMarkUtils {
         }
         return in;
     }
+
+    public static String getFreemarkerContent(Map dataMap, String templateName) {
+        String result = "";
+        try {
+            //获取模板
+            Template template = getConfiguration().getTemplate(templateName);
+
+            StringWriter swriter = new StringWriter();
+            //生成文件
+            template.process(dataMap, swriter);
+            result = swriter.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 }
