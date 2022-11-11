@@ -1,40 +1,25 @@
 package com.mybatis.demo;
 
 
-import org.apache.commons.lang.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class testtt {
     public static void main(String[] args) throws Throwable {
 
-        TestJson testJson = new TestJson();
-        testJson.setName("A");
-        testJson.setDay(null);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date1 = sdf.parse("2023-01-15");
 
-        TestJson testJson1 = new TestJson();
-        testJson1.setName("B");
-        testJson1.setDay("BBB");
+        Date date2 = new Date();
 
-        List<TestJson> list = new ArrayList<>();
+        int days = (int) ((date2.getTime() - date1.getTime()) / (1000*3600*24));
 
-        list.add(testJson);
-        list.add(testJson1);
-
-        List<String> collect = list.stream()
-                .map(TestJson::getDay)
-                .filter(StringUtils::isNotEmpty)
-                .collect(Collectors.toList());
-
-        collect.forEach(System.out::println);
-
+        System.out.println(days);
     }
 }
 
 
-class  TestJson{
+class TestJson {
 
     String name;
 

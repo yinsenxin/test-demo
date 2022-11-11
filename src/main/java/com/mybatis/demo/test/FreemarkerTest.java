@@ -95,11 +95,11 @@ public class FreemarkerTest {
                             documentXmlRelsInput.close();
                         }
                     } else if ("word/document.xml".equals(next.getName())) {//如果是word/document.xml由我们输入
-                        if (documentInput != null) {
-                            while ((len = documentInput.read(buffer)) != -1) {
+                        if (documentInput2 != null) {
+                            while ((len = documentInput2.read(buffer)) != -1) {
                                 zipout.write(buffer, 0, len);
                             }
-                            documentInput.close();
+                            documentInput2.close();
                         }
                     } else {
                         while ((len = is.read(buffer)) != -1) {
